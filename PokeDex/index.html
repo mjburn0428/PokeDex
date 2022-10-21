@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html ng-app="pokedex">
+  <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68311616-5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-68311616-5');
+    </script>
+    <meta charset="utf-8">
+    <meta name="theme-color" content="#fff">
+    <meta name="author" content="Joe Burner">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="pokedex, pokemon, pikachu, bulbasaur, charmander, pokedex database">
+    <meta name="description" content="A guide to Pokédex stats in the Pokémon games.">
+    <title>Pokemon | Pokedex</title>
+    <!--Add favicon icons including apple and android support-->
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    <link rel="android icon" href="img/android-chrome-192x192.png">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css">
+    <!-- Add script source-->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.7/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.min.js"></script>
+    <script async src="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+    <script src="https://code.responsivevoice.org/responsivevoice.js"></script>
+    <script src="./js/app.js"></script>
+    <script src="./js/mainCtrl.js"></script>
+    <script src="./js/pokeServ.js"></script>
+    <script src="./js/regionService.js"></script>
+    <script src="./js/landingSrv.js"></script>
+    <script src="./js/routes.js"></script>
+    <script src="./js/speciesService.js"></script>
+    <script src="./js/carouselDirective.js"></script>
+<!--Style is below.-->
+    <style>
+    html, body, div, h1, h2, h3, p, a, ul, li, footer, header {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+        box-sizing: border-box;
+    }
+    footer, header, section {
+        display: block;
+    }
+    body {
+        line-height: 1;
+        overflow-x: hidden;
+    }
+    ul {
+        list-style: none;
+    }
+    h1,h2,h3,h4 {
+      font-family: 'Lato', sans-serif;
+    }
+    input:focus {
+      outline: none
+    }
+    .header-content {
+      height: 120px;
+      width: 100%;
+      background-color: #c50505;
+      box-shadow: 0 5px 10px rgb(173, 160, 160);
+      z-index: 5;
+      display: flex;
+      justify-content: center;
+    }
+    .nav-links {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      color: rgb(179, 179, 0);
+      font-family: monospace;
+      font-size: 17px;
+      font-weight: 700;
+      box-shadow: 0 0 10px 2px;
+    }
+    .nav-links > a {
+      text-decoration: none;
+      color: rgb(187, 187, 5);
+    }
+    .header-logo {
+      width: 100%;
+      
+    }
+    .main-content {
+      width: 100%;
+    }
+    .search-container {
+      margin-top: 50px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: center;
+    }
+    .searchField {
+      font-size: 20px;
+      text-align: left;
+      padding-left: 30px;
+      border-radius: 15px;
+      background-color: rgb(231, 201, 201);
+      height: 30px;
+      width: 200px;
+      z-index: 5;
+    }
+    .main-pokedex-container {
+      margin: 0 auto;
+    }
+    .pokedex-wrapper {
+      height: 424px;
+      width: 500px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .pokedex-background-wrapper{
+      position: absolute;
+      height: 96%;
+      width: 100%;
+      margin-top: 2%;
+    }
+    .pokedex-background {
+      position: absolute;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 95px;
+      background: #ece907;
+      box-shadow: 0 0 20px 2px grey;
+    }
+    .background-topLayer {
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      border-radius: 95px;
+      transition: all 1000ms 200ms ease;
+      background: linear-gradient(#70CBF7, #C2F0FB, #C2F0FB, #C2F0FB, #C2F0FB, #C2F0FB, #C2F0FB, #C2F0FB, #C2F0FB, #C2F0FB, #70CBF7);
+      opacity: 0;
+    }
+    .pokedex-dynamic-wrapper {
+      z-index: 2;
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      padding: 25px 15%;
+      display: flex;
+      justify-content: center;
+      transition: all 500ms ease;
+      opacity: 0;
+    }
+    .view {
+      width: 100%;
+      height: 100%;
+      color: #186a79;
+    }
+    .pokedexLogo {
+      display: flex;
+      justify-content: center;
+      margin-top: 20%;
+    }
+    .info-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    .poke-pic {
+      display: flex;
+      justify-content: center;
+      height: 200px;
+    }
+    .poke-pic > img {
+      height: 100%;
+    }
+    .poke-name {
+      font-size: 50px;
+      font-weight: 700;
+      display: flex;
+      justify-content: center;
+      font-family: 'PokemonGB', cursive;
+      margin-top: 40px;
+      margin-bottom: 10px;
+    }
+    .details {
+      font-size: 25px;
+      font-family: cursive;
+      font-weight: 700;
+      text-decoration: none;
+      position: absolute;
+      top: 30px;
+      right: 80px;
+      color: #0a8095;
+      cursor: pointer;
+    }
+    .details:hover {
+      color: #285d67;
+    }
+    .details-header {
+      display: inline-flex;
+    }
+    .details-name {
+      font-size: 40px;
+      font-weight: 700;
+      font-family: 'PokemonGB', cursive;
+    }
+    .sprite {
+      margin-top: -35px;
+      height: 96px;
+      margin-left: 15px;
+    }
+    .sprite > img {
+      height: 100%;
+    }
+    .textInfo {
+      display: flex;
+      flex-wrap: wrap;
+      font-family: cursive;
+    }
+    .region {
+      margin-right: 15px;
+    }
+    .infoTitle {
+      font-weight: 700;
+      font-family: 'PokemonGB', cursive;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .infoList {
+      overflow: auto;
+      font-size: 20px;
+      height: 75px;
+    }
+    .infoH3 {
+      font-size: 26px;
+      margin: 10px 0;
+    }
+    .other-title {
+      font-weight: 700;
+      font-size: 25px;
+      font-family: cursive;
+      display: flex;
+      justify-content: center;
+      margin-top: -10px;
+      margin-bottom: 10px;
+    }
+    .misc-details {
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: center;
+    }
+    .misc-text {
+      margin: auto;
+    }
+    .misc-text > h2 {
+      font-weight: 700;
+      font-family: cursive;
+    }
+    .evo-list {
+      font-family: cursive;
+    }
+    .evo-element {
+      font-weight: 700;
+      margin: auto;
+    }
+    .evo-element:hover {
+      cursor: pointer;
+    }
+    .random-container {
+      height: 80%;
+      width: 100%;
+    }
+    .random-pic {
+      height: 200px;
+      display: flex;
+      justify-content: center;
+    }
+    .random-pic > img {
+      height: 100%;
+    }
+    .random-name {
+      font-size: 55px;
+      font-weight: 700;
+      display: flex;
+      justify-content: center;
+      opacity: 0;
+    }
+    .gameInput {
+      font-size: 20px;
+      text-align: center;
+      border-radius: 15px;
+      background-color: rgb(223, 205, 205);
+      z-index: 5;
+      margin-top: 25px;
+    }
+    .video-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 80px;
+    }
+    .type-container {
+      height: 100%;
+      width: 100%;
+      padding: 62px 15px 0 15px;
+      overflow: auto;
+    }
+    .type-items{
+      display: flex;
+      justify-content: center;
+      font-size: 30px;
+      font-family: cursive;
+      height: 77px;
+    }
+    .pokedex-animated-wrapper {
+      z-index: 4;
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      pointer-events: none;
+    }
+    .pokedex-img-container {
+      transition: all 1000ms ease-in-out;
+      height: 100%;
+      z-index: 5;
+      position: absolute;
+    }
+    .dex-left {
+      left: 0;
+    }
+    .dex-ball {
+      z-index: 6;
+      transition: all 1000ms ease-in-out;
+      margin-left: 33%;
+      opacity: 1;
+      margin-top: 26%;
+      position: absolute;
+      pointer-events: auto;
+    }
+    .dex-right {
+      right: 0;
+    }
+    .pokedex-image {
+      height: 100%;
+    }
+    .ball-img {
+      height: 163px;
+      cursor: pointer;
+      z-index: 5;
+    }
+    .footer-content {
+      margin-top: 3vh;
+      height: 120px;
+      width: 100%;
+      background-color: #be0202;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 25px;
+    }
+    .made-by {
+      color: rgb(222, 238, 5);
+    }
+    .made-by:hover {
+      opacity: .8;
+    }
+    .random-CTA {
+      border-radius: 50%;
+      border: 1px solid black;
+      height: 35px;
+      width: 35px;
+      background-image: url('https://upload.wikimedia.org/wikipedia/en/3/39/Pokeball.PNG');
+      background-size: cover;
+    }
+    .random-CTA:hover {
+      cursor: pointer;
+    }
+    .wins {
+      font-size: 30px;
+      margin-top: 10px;
+      font-weight: 700;
+      display: flex;
+      justify-content: center;
+      font-family: cursive;
+    }
+    .wrong {
+      font-size: 35px;
+      margin-top: 50px;
+      font-weight: 700;
+      display: flex;
+      justify-content: center;
+      font-family: cursive;
+    }
+    .wrong h1 {
+      font-family: cursive;
+    }
+    .box {
+      transition: transform 3s ease-in-out;
+    }
+    .hide {
+      transition: all 1000ms ease-in-out;
+      transform: rotate(360deg);
+      opacity: 0;
+    }
+    .slideLeft {
+      transform: translateX(-70%);
+    }
+    .slideRight {
+      transform: translateX(70%);
+    }
+    .gradient {
+      transition: all;
+      transform: scaleX(1.5);
+      transition: all 1s 200ms;
+      opacity: 1;
+    }
+    .open {
+      transition: all 500ms ease-in;
+      opacity: 1;
+    }
+    .showName {
+      transition: all 200ms ease;
+      opacity: 1;
+    }
+    .region-carousel {
+      height: 100%;
+      width: 100%;
+      padding-top: 80px;
+    }
+    .carousel-containers {
+      height: 100%;
+      width: 100%;
+    }
+    .carousel-img {
+      width: 100%;
+      box-shadow: 0 4px 2px -2px rgb(192, 181, 181);
+    }
+    .carousel-text {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+      font-size: 30px;
+      font-family: cursive;
+      color: rgb(162, 172, 27);
+    }
+    ::-webkit-scrollbar {
+      display: none;
+      color: rgb(3, 3, 230);
+      
+    }
+    @media screen and (max-width: 675px) {
+      .pokedex-wrapper {
+        height: 321px;
+        width: 358px;
+      }
+      .ball-img {
+        height: 117px;
+      }
+      .dex-ball {
+        margin-top: 28%;
+      }
+      .search-container {
+        margin-top: 25px;
+      }
+      .nav-links {
+        font-size: 13px;
+      }
+    }
+    @media screen and (max-width: 321px) {
+      .pokedex-wrapper {
+        height: 275px;
+        width: 315px;
+      }
+      .ball-img {
+        height: 110px;
+      }
+      .dex-ball {
+        margin-left: 32%;
+      }
+      .footer-content {
+        height: 70px;
+      }
+    }
+    </style>
+</head>
+
+<body ng-controller="mainCtrl">
+    <header>
+        <div class="header-content">
+            <a ui-sref="home" ng-click="cssToggle = !cssToggle">
+                <img class='header-logo' src="./img/Pokedex.png" alt="Pokemon">
+            </a>
+        </div>
+        <ul class="nav-links">
+            <a href="./poke-tracker/tracker.html"><li>Pokemon Master List</li></a>
+        </ul>
+    </header>
+
+    <main role="main" class='main-content'>
+        <section class="main-pokedex-container">
+            <div class="search-container">
+                <form ng-submit="testData(num); pokeData(num); regionData(num); pokemonID(num); getMoreData(num); route()">
+                    <input class="searchField" ng-model="num" type="text" placeholder="Search pokemon" autofocus/>
+                </form>
+            </div>
+
+            <div class="pokedex-wrapper" ng-class="{box: cssToggle}">
+                <div class="pokedex-background-wrapper">
+                    <div class="pokedex-background" ng-class="{gradient: cssToggle}">
+                    </div>
+                    <div class="background-topLayer" ng-class="{gradient: cssToggle}">
+                    </div>
+                </div>
+                <div class="pokedex-dynamic-wrapper" ng-class="{open: cssToggle}">
+                    <ui-view class="view"></ui-view>
+                </div>
+                <div class="pokedex-animated-wrapper">
+                    <div class="pokedex-img-container dex-left" ng-class="{slideLeft: cssToggle}">
+                        <img class='pokedex-image' src="./img/Pokedex-leftside.png" alt="left">
+                    </div>
+                    <div class="dex-ball" ng-class="{hide: cssToggle}">
+                        <img class='ball-img' ng-click="cssToggle = !cssToggle" src="./img/Pokedex-ball-trans.png" alt="center">
+                    </div>
+                    <div class="pokedex-img-container dex-right" ng-class="{slideRight: cssToggle}">
+                        <img class='pokedex-image' src="./img/Pokedex-rightside.png" alt="right">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class='footer-content'>
+        <a class="made-by" href="">Author: Joe Burner</a>
+        <a ui-sref="randomSearch">
+            <button type="button" class="random-CTA" ng-click="randomizer(); startGame()"></button>
+        </a>
+    </footer>
+
+</body>
+</html>
